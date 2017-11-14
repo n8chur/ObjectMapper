@@ -161,13 +161,14 @@ class CustomTransformTests: XCTestCase {
 		]
 		
 		let transform = mapper.map(JSON: JSON)
-		
-		XCTAssertEqual(transform?.colorRed, TestHexColor.red)
-		XCTAssertEqual(transform?.colorGreenLowercase, TestHexColor.green)
-		XCTAssertEqual(transform?.colorBlueWithoutHash, TestHexColor.blue)
-		XCTAssertEqual(transform?.color3lenght, TestHexColor.red)
-		XCTAssertEqual(transform?.color4lenght, TestHexColor.red)
-		XCTAssertEqual(transform?.color8lenght, TestHexColor.red)
+
+		// TODO: Transformed values should match TestHexColor values.
+		XCTAssertEqual(transform?.colorRed?.hasValuesEqualTo(TestHexColor.red), true)
+		XCTAssertEqual(transform?.colorGreenLowercase?.hasValuesEqualTo(TestHexColor.green), true)
+		XCTAssertEqual(transform?.colorBlueWithoutHash?.hasValuesEqualTo(TestHexColor.blue), true)
+		XCTAssertEqual(transform?.color3lenght?.hasValuesEqualTo(TestHexColor.red), true)
+		XCTAssertEqual(transform?.color4lenght?.hasValuesEqualTo(TestHexColor.red), true)
+		XCTAssertEqual(transform?.color8lenght?.hasValuesEqualTo(TestHexColor.red), true)
 		
 		let JSONOutput = mapper.toJSON(transform!)
 		
@@ -248,6 +249,29 @@ class Transforms: Mappable {
 		color3lenght			<- (map["color3lenght"], HexColorTransform())
 		color4lenght			<- (map["color4lenght"], HexColorTransform())
 		color8lenght			<- (map["color8lenght"], HexColorTransform(alphaToJSON: true))
+	}
+}
+
+// TODO: Remove
+extension TestHexColor {
+	func hasValuesEqualTo(_ other: TestHexColor) -> Bool {
+#if os(iOS) || os(tvOS) || os(watchOS)
+	var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
+	self.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+
+	var otherRed: CGFloat = 0, otherGreen: CGFloat = 0, otherBlue: CGFloat = 0, otherAlpha: CGFloat = 0
+	other.getRed(&otherRed, green: &otherGreen, blue: &otherBlue, alpha: &otherAlpha)
+
+	return (red == otherRed &&
+		green == otherGreen &&
+		blue == otherBlue &&
+		alpha == otherAlpha)
+#else
+	return (self.redComponent == other.redComponent &&
+		self.greenComponent == other.greenComponent &&
+		self.blueComponent == other.blueComponent &&
+		self.alphaComponent == other.alphaComponent)
+#endif
 	}
 }
 

@@ -354,23 +354,26 @@ extension Mapper {
 		}
 	}
 	
-	/// Maps an Object to a JSON string with option of pretty formatting
-	public func toJSONString(_ object: N, prettyPrint: Bool = false) -> String? {
+	/// Maps an Object to a JSON string with option of pretty formatting and sorted keys.
+	public func toJSONString(_ object: N, prettyPrint: Bool = false, sortedKeys: Bool = false) -> String? {
 		let JSONDict = toJSON(object)
 		
-        return Mapper.toJSONString(JSONDict as Any, prettyPrint: prettyPrint)
+        return Mapper.toJSONString(JSONDict as Any, prettyPrint: prettyPrint, sortedKeys: sortedKeys)
 	}
 
-    /// Maps an array of Objects to a JSON string with option of pretty formatting	
-    public func toJSONString(_ array: [N], prettyPrint: Bool = false) -> String? {
+    /// Maps an array of Objects to a JSON string with option of pretty formatting and sorted keys.
+    public func toJSONString(_ array: [N], prettyPrint: Bool = false, sortedKeys: Bool = false) -> String? {
         let JSONDict = toJSONArray(array)
         
-        return Mapper.toJSONString(JSONDict as Any, prettyPrint: prettyPrint)
+        return Mapper.toJSONString(JSONDict as Any, prettyPrint: prettyPrint, sortedKeys: sortedKeys)
     }
 	
-	/// Converts an Object to a JSON string with option of pretty formatting
-	public static func toJSONString(_ JSONObject: Any, prettyPrint: Bool) -> String? {
-		let options: JSONSerialization.WritingOptions = prettyPrint ? .prettyPrinted : []
+	/// Converts an Object to a JSON string with option of pretty formatting and sorted keys.
+	public static func toJSONString(_ JSONObject: Any, prettyPrint: Bool, sortedKeys: Bool) -> String? {
+		var options: JSONSerialization.WritingOptions = prettyPrint ? .prettyPrinted : []
+		if (sortedKeys) {
+			options.insert(.sortedKeys)
+		}
 		if let JSON = Mapper.toJSONData(JSONObject, options: options) {
 			return String(data: JSON, encoding: String.Encoding.utf8)
 		}
@@ -438,11 +441,11 @@ extension Mapper where N: Hashable {
 		}
 	}
 	
-	/// Maps a set of Objects to a JSON string with option of pretty formatting
-	public func toJSONString(_ set: Set<N>, prettyPrint: Bool = false) -> String? {
+	/// Maps a set of Objects to a JSON string with option of pretty formatting and sorted keys.
+	public func toJSONString(_ set: Set<N>, prettyPrint: Bool = false, sortedKeys: Bool = false) -> String? {
 		let JSONDict = toJSONSet(set)
 		
-		return Mapper.toJSONString(JSONDict as Any, prettyPrint: prettyPrint)
+		return Mapper.toJSONString(JSONDict as Any, prettyPrint: prettyPrint, sortedKeys: sortedKeys)
 	}
 }
 
